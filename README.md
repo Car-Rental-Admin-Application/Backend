@@ -28,7 +28,7 @@ A secure admin authentication system built with:
 ### Installation
 ```bash
 # Clone repository
-git clone [your-repo-url] && cd your-repo
+git clone https://github.com/Car-Rental-Admin-Application/Backend.git && cd Backend
 
 # Install dependencies
 npm install
@@ -115,7 +115,7 @@ docker-compose up -d
 | `JWT validation failed` | Ensure token is in Authorization header |
 
 ## License
-MIT © [Your Name]
+MIT © VSMP
 ```
 
 Key features of this README:
@@ -125,9 +125,3 @@ Key features of this README:
 4. Visual project structure
 5. Production deployment notes
 6. Common issues table
-
-To use:
-1. Copy this entire markdown
-2. Paste into a new `README.md` file
-3. Replace `[your-repo-url]` with your actual repository URL
-4. Customize license/author as needed
