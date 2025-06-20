@@ -1,6 +1,3 @@
-Here's a polished `README.md` for your project with clear setup instructions, testing steps, and architecture overview:
-
-```markdown
 # Admin Authentication System
 
 ![NestJS](https://img.shields.io/badge/NestJS-E0234E?style=for-the-badge&logo=nestjs&logoColor=white)
