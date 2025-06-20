@@ -5,6 +5,7 @@
 ![GraphQL](https://img.shields.io/badge/GraphQL-E10098?style=for-the-badge&logo=graphql&logoColor=white)
 ![MongoDB](https://img.shields.io/badge/MongoDB-47A248?style=for-the-badge&logo=mongodb&logoColor=white)
 ![Redis](https://img.shields.io/badge/Redis-DC382D?style=for-the-badge&logo=redis&logoColor=white)
+![Kafka](https://img.shields.io/badge/Kafka-231F20?style=for-the-badge&logo=apache-kafka&logoColor=white)
 
 A secure admin authentication and vehicle management system built with:
 
@@ -178,16 +179,3 @@ mutation {
   }
 }
 ```
-
-## Conclusion
-
-This project demonstrates the design, development, and deployment of a modern web application based on a microservices architecture, following current development and DevOps standards. The chosen theme is an **admin-side car rental management system**, providing secure authentication, vehicle management, and scalable service communication. The backend leverages NestJS, GraphQL, MongoDB, Redis, and JWT authentication, and is designed for extensibility and real-world deployment scenarios. This project also includes UML conception for architecture and service interactions.
-
-## Authors
-
-- Mohammed CHERKAOUI
-- Wassim ZAAIT
-
-## License
-
-MIT © VSMP
