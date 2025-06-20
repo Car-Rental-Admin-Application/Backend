@@ -1,32 +1,48 @@
 import { Injectable } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
 import * as bcrypt from 'bcrypt';
-
-// Define a minimal User interface for demonstration purposes
-interface User {
-  username: string;
-  password: string;
-}
+import { JwtService } from '@nestjs/jwt';
+import { Admin } from './auth.model';
 
 @Injectable()
 export class AuthService {
-  private users: User[] = []; // Replace with DB later
+  constructor(
+    @InjectModel(Admin.name) private adminModel: Model<Admin>,
+    private jwtService: JwtService,
+  ) {}
 
-  constructor(private jwtService: JwtService) {}
-
-  async validateUser(username: string, pass: string): Promise<any> {
-    const user = this.users.find(u => u.username === username);
-    if (user && await bcrypt.compare(pass, user.password)) {
-      const { password, ...result } = user;
-      return result;
-    }
-    return null;
+  async onModuleInit() {
+    await this.createInitialAdmin();
   }
 
-  async login(user: any) {
-    const payload = { username: user.username };
+  private async createInitialAdmin() {
+    const exists = await this.adminModel.findOne({ isSuperAdmin: true });
+    if (!exists) {
+      const hashedPassword = await bcrypt.hash('admin123', 10);
+      await this.adminModel.create({
+        username: 'admin',
+        password: hashedPassword,
+        isSuperAdmin: true,
+      });
+    }
+  }
+
+  async createAdmin(username: string, password: string) {
+    const hashedPassword = await bcrypt.hash(password, 10);
+    return this.adminModel.create({ username, password: hashedPassword });
+  }
+
+  async validateUser(username: string, password: string) {
+    const admin = await this.adminModel.findOne({ username });
+    if (!admin) return null;
+    const valid = await bcrypt.compare(password, admin.password);
+    return valid ? admin : null;
+  }
+
+  async login(admin: any) {
     return {
-      access_token: this.jwtService.sign(payload),
+      access_token: this.jwtService.sign({ username: admin.username, sub: admin._id }),
     };
   }
 }
