@@ -188,7 +188,7 @@ This project demonstrates the design, development, and deployment of a modern we
 
 - Mohammed CHERKAOUI
 - Wassim ZAAIT
-- Yous
+- Yousra Msaouri Charroud
 
 ## License
 
