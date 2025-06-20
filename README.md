@@ -32,9 +32,6 @@ git clone https://github.com/Car-Rental-Admin-Application/Backend.git && cd Back
 
 # Install dependencies
 npm install
-
-# Environment setup (create .env file)
-cp .env.example .env
 ```
 
 ### Configuration
