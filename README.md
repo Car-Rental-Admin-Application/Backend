@@ -101,6 +101,8 @@ Each service has its own GraphQL API and runs on a separate port (default: 3000 
 
 ## GraphQL API Reference
 
+---
+
 ### Vehicle Service (default: http://localhost:3001/graphql)
 
 #### findAll
@@ -177,6 +179,36 @@ mutation {
   deleteVehicle(id: "6855208a7e95a553f3be7b79") {
     model
   }
+}
+```
+
+---
+
+### Auth Service (default: http://localhost:3000/graphql)
+
+#### login
+
+```graphql
+mutation {
+  login(username: "admin", password: "admin123")
+}
+```
+
+#### Token Usage
+
+Add the following header to requests requiring authentication:
+
+```json
+{
+  "Authorization": "Bearer YOUR_TOKEN_HERE"
+}
+```
+
+#### createAdmin
+
+```graphql
+mutation {
+  createAdmin(username: "newadmin", password: "newpass123")
 }
 ```
 
