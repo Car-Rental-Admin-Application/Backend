@@ -1,4 +1,4 @@
-# Admin Authentication & Vehicle Microservices System
+# Admin-Side Rental Vehicle Management Microservices System
 
 ![NestJS](https://img.shields.io/badge/NestJS-E0234E?style=for-the-badge&logo=nestjs&logoColor=white)
 ![JWT](https://img.shields.io/badge/JWT-000000?style=for-the-badge&logo=JSON%20web%20tokens&logoColor=white)
@@ -179,3 +179,17 @@ mutation {
   }
 }
 ```
+
+## Conclusion
+
+This project demonstrates the design, development, and deployment of a modern web application based on a microservices architecture, following current development and DevOps standards. The chosen theme is an **admin-side car rental management system**, providing secure authentication, vehicle management, and scalable service communication. The backend leverages NestJS, GraphQL, MongoDB, Redis, and JWT authentication, and is designed for extensibility and real-world deployment scenarios. This project also includes UML conception for architecture and service interactions.
+
+## Authors
+
+- Mohammed CHERKAOUI
+- Wassim ZAAIT
+- Yous
+
+## License
+
+MIT © VSMP
