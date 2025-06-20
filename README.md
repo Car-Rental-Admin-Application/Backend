@@ -101,7 +101,6 @@ Each service has its own GraphQL API and runs on a separate port (default: 3000 
 
 ## GraphQL API Reference
 
----
 
 ### Vehicle Service (default: http://localhost:3001/graphql)
 
@@ -182,7 +181,6 @@ mutation {
 }
 ```
 
----
 
 ### Auth Service (default: http://localhost:3000/graphql)
 
