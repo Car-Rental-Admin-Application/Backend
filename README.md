@@ -101,7 +101,6 @@ Each service has its own GraphQL API and runs on a separate port (default: 3000 
 
 ## GraphQL API Reference
 
-
 ### Vehicle Service (default: http://localhost:3001/graphql)
 
 #### findAll
@@ -181,7 +180,6 @@ mutation {
 }
 ```
 
-
 ### Auth Service (default: http://localhost:3000/graphql)
 
 #### login
@@ -223,3 +221,56 @@ This project demonstrates the design, development, and deployment of a modern we
 ## License
 
 MIT © VSMP
+
+---
+
+## DevOps: Running All Services with Docker Compose
+
+### 1. Prerequisites
+
+- Ensure you have [Docker](https://docs.docker.com/get-docker/) and [Docker Compose](https://docs.docker.com/compose/install/) installed.
+
+### 2. Build and Start All Services
+
+Open a terminal in the project root (where `docker-compose.yml` is located) and run:
+
+```sh
+docker-compose up --build
+```
+
+- This will build Docker images for all services and start them, including MongoDB, Redis, Kafka, and Zookeeper.
+
+### 3. Accessing Services
+
+- **auth-service:** http://localhost:3001
+- **log-service:** http://localhost:3002
+- **vehicle-service:** http://localhost:3003
+
+### 4. Stopping All Services
+
+Press `Ctrl+C` in the terminal to stop all running services.
+
+### 5. Cleaning Up (Optional)
+
+To remove all containers and networks created by Docker Compose, run:
+
+```sh
+docker-compose down
+```
+
+### 6. Additional Tips
+
+- To run services in the background (detached mode):
+  ```sh
+  docker-compose up --build -d
+  ```
+- To view logs for a specific service:
+  ```sh
+  docker-compose logs <service-name>
+  ```
+  Example:
+  ```sh
+  docker-compose logs auth-service
+  ```
+
+---
