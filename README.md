@@ -3,6 +3,7 @@
 ![NestJS](https://img.shields.io/badge/NestJS-E0234E?style=for-the-badge&logo=nestjs&logoColor=white)
 ![MongoDB](https://img.shields.io/badge/MongoDB-47A248?style=for-the-badge&logo=mongodb&logoColor=white)
 ![GraphQL](https://img.shields.io/badge/GraphQL-E10098?style=for-the-badge&logo=graphql&logoColor=white)
+![JWT](https://img.shields.io/badge/JWT-000000?style=for-the-badge&logo=JSON%20web%20tokens&logoColor=white)
 
 A secure admin authentication and vehicle management system built with:
 
@@ -175,90 +176,4 @@ mutation {
     model
   }
 }
-```
-
-### Auth Service (default: http://localhost:3000/graphql)
-
-#### login
-
-```graphql
-mutation {
-  login(username: "admin", password: "admin123")
-}
-```
-
-#### Token Usage
-
-Add the following header to requests requiring authentication:
-
-```json
-{
-  "Authorization": "Bearer YOUR_TOKEN_HERE"
-}
-```
-
-#### createAdmin
-
-```graphql
-mutation {
-  createAdmin(username: "newadmin", password: "newpass123")
-}
-```
-
-## Testing
-
-1. Access GraphQL Playground for each service:
-   - Auth Service: `http://localhost:3000/graphql`
-   - Vehicle Service: `http://localhost:3001/graphql`
-2. Verify initial admin exists in MongoDB:
-   ```bash
-   mongosh admin_auth --eval "db.admins.find()"
-   ```
-3. Test protected routes with/without tokens
-
-## Project Structure
-
-```
-src/
-├── auth/                  # Auth Service
-│   ├── auth.model.ts
-│   ├── auth.resolver.ts
-│   ├── auth.service.ts
-│   ├── strategies/
-│   └── guards/
-├── vehicles/              # Vehicle Service
-│   ├── vehicle.model.ts
-│   ├── vehicles.resolver.ts
-│   ├── vehicles.service.ts
-│   └── dto/
-├── app.module.ts
-└── main.ts
-```
-
-## Deployment
-
-For production deployment:
-
-```bash
-# Build Docker image
-# (Repeat for each service as needed)
-docker build -t admin-auth .
-
-docker-compose up -d
-```
-
-## Troubleshooting
-
-| Error                       | Solution                                |
-| --------------------------- | --------------------------------------- |
-| `MongoDB connection failed` | Verify `mongod` is running              |
-| `Invalid credentials`       | Check admin exists in DB                |
-| `JWT validation failed`     | Ensure token is in Authorization header |
-
-## License
-
-MIT © VSMP
-
-```
-
 ```
