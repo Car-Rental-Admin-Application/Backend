@@ -178,3 +178,16 @@ mutation {
   }
 }
 ```
+
+## Conclusion
+
+This project demonstrates the design, development, and deployment of a modern web application based on a microservices architecture, following current development and DevOps standards. The chosen theme is an **admin-side car rental management system**, providing secure authentication, vehicle management, and scalable service communication. The backend leverages NestJS, GraphQL, MongoDB, Redis, and JWT authentication, and is designed for extensibility and real-world deployment scenarios. This project also includes UML conception for architecture and service interactions.
+
+## Authors
+
+- Mohammed CHERKAOUI
+- Wassim ZAAIT
+
+## License
+
+MIT © VSMP
