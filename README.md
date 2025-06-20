@@ -46,7 +46,7 @@ npm install
 
 ```bash
 # Change directory to vehicle-service
-cd backend/vehicle-service
+cd vehicle-service
 
 # Install required packages
 npm install @nestjs/graphql graphql apollo-server-express
@@ -77,14 +77,14 @@ Each microservice must be run in its own terminal. Make sure to change to the co
 ### Start Vehicle Service
 
 ```bash
-cd backend/vehicle-service
+cd vehicle-service
 npm run start:dev
 ```
 
 ### Start Auth Service
 
 ```bash
-cd backend/auth-service
+cd auth-service
 npm run start:dev
 ```
 
