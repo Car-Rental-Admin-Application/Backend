@@ -34,13 +34,6 @@ git clone https://github.com/Car-Rental-Admin-Application/Backend.git && cd Back
 npm install
 ```
 
-### Configuration
-`.env` file:
-```ini
-MONGODB_URI=mongodb://localhost:27017/admin_auth
-JWT_SECRET=your-strong-secret-here
-```
-
 ### Running the App
 ```bash
 # Start in development mode
