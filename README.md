@@ -6,183 +6,190 @@
 ![MongoDB](https://img.shields.io/badge/MongoDB-47A248?style=for-the-badge&logo=mongodb&logoColor=white)
 ![Redis](https://img.shields.io/badge/Redis-DC382D?style=for-the-badge&logo=redis&logoColor=white)
 ![Kafka](https://img.shields.io/badge/Kafka-231F20?style=for-the-badge&logo=apache-kafka&logoColor=white)
+![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)
 
-A secure admin authentication and vehicle management system built with:
+A secure admin authentication and vehicle management system built with NestJS microservices architecture.
 
-- **NestJS** backend (microservices architecture)
-- **MongoDB** database
-- **GraphQL** API
-- **JWT** authentication
+## 📋 Table of Contents
 
-## Features
+- [Features](#-features)
+- [Architecture](#-architecture)
+- [Prerequisites](#-prerequisites)
+- [Local Development Setup](#-local-development-setup)
+- [Docker Setup](#-docker-setup)
+- [Testing](#-testing)
+- [API Documentation](#-api-documentation)
+- [Environment Variables](#-environment-variables)
+- [Authors & License](#-authors--license)
 
-- Microservices: Auth Service & Vehicle Service
-- Auto-creation of initial superadmin (`admin/admin123`)
-- Admin creation restricted to authenticated users
-- Password hashing with bcrypt
-- Protected GraphQL endpoints
-- JWT token expiration (1 hour)
-- Vehicle CRUD operations
+## ✨ Features
 
-## Installation
+- **🔐 Secure Authentication**: JWT-based admin authentication
+- **🚗 Vehicle Management**: Complete CRUD operations for vehicles
+- **📊 Logging System**: Centralized logging with Kafka integration
+- **🔄 Microservices**: Scalable architecture with separate services
+- **📈 GraphQL API**: Modern API with GraphQL playground
+- **🗄️ MongoDB**: NoSQL database for flexible data storage
+- **⚡ Redis**: High-performance caching
+- **🐳 Docker Ready**: Containerized deployment
 
-### Prerequisites
+## 🏗️ Architecture
 
-- Node.js v16+
-- MongoDB (local or Docker)
-- Yarn/NPM
+```
+┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
+│   Auth Service  │    │ Vehicle Service │    │   Log Service   │
+│   (Port 4001)   │    │   (Port 4003)   │    │   (Port 4002)   │
+└─────────────────┘    └─────────────────┘    └─────────────────┘
+         │                       │                       │
+         └───────────────────────┼───────────────────────┘
+                                 │
+         ┌─────────────────────────────────────────────────────┐
+         │              Infrastructure Layer                   │
+         ├─────────────────┬─────────────────┬─────────────────┤
+         │    MongoDB      │     Redis       │     Kafka       │
+         │   (Port 27017)  │   (Port 6379)   │   (Port 9092)   │
+         └─────────────────┴─────────────────┴─────────────────┘
+```
 
-### Step 1: Clone and Install Root Dependencies
+## 📋 Prerequisites
+
+### For Local Development
+
+- Node.js (v18 or higher)
+- npm or yarn
+- MongoDB (running locally or cloud)
+- Redis (running locally or cloud)
+- Apache Kafka (running locally or cloud)
+
+### For Docker Setup
+
+- Docker Desktop
+- Docker Compose
+
+## 🚀 Local Development Setup
+
+### 1. Clone and Install Dependencies
 
 ```bash
-# Clone repository
-git clone https://github.com/Car-Rental-Admin-Application/Backend.git && cd Backend
+git clone <repository-url>
+cd Backend
 
-# Install root dependencies
-npm install
+# Install dependencies for all services
+cd auth-service && npm install && cd ..
+cd vehicle-service && npm install && cd ..
+cd log-service && npm install && cd ..
 ```
 
-### Step 2: Install Vehicle Service Dependencies
+### 2. Start Infrastructure Services
+
+Start MongoDB, Redis, and Kafka locally or use Docker:
 
 ```bash
-# Change directory to vehicle-service
-cd vehicle-service
-
-# Install required packages
-npm install @nestjs/graphql graphql apollo-server-express
-npm install @nestjs/mongoose mongoose
-npm install redis ioredis
-npm install @nestjs/config
+# Using Docker for infrastructure only
+docker run -d --name mongodb -p 27017:27017 mongo
+docker run -d --name redis -p 6379:6379 redis
+docker run -d --name zookeeper -p 2181:2181 confluentinc/cp-zookeeper:7.3.0
+docker run -d --name kafka -p 9092:9092 --link zookeeper:zookeeper confluentinc/cp-kafka:7.3.0
 ```
 
-### Step 3: Install Auth Service Dependencies
+### 3. Configure Environment Variables
+
+Create `.env` files in each service directory:
+
+**auth-service/.env:**
+
+```env
+MONGODB_URI=mongodb://localhost:27017/admin_auth
+JWT_SECRET=your-secret-key
+```
+
+**vehicle-service/.env:**
+
+```env
+MONGODB_URI=mongodb://localhost:27017/vehicle_db
+```
+
+**log-service/.env:**
+
+```env
+MONGODB_URI=mongodb://localhost:27017/logs_db
+```
+
+### 4. Start Services
 
 ```bash
-# Change directory to auth-service
-cd ../auth-service
+# Terminal 1 - Auth Service
+cd auth-service && npm run start:dev
 
-# Install required packages
-npm install @nestjs/passport passport passport-jwt
-npm install @nestjs/mongoose mongoose
-npm install bcrypt @types/bcrypt
-npm install jsonwebtoken @types/jsonwebtoken
-npm install @nestjs/config
-npm install cookie-parser @types/cookie-parser
+# Terminal 2 - Vehicle Service
+cd vehicle-service && npm run start:dev
+
+# Terminal 3 - Log Service
+cd log-service && npm run start:dev
 ```
 
-## Running the Project
+### 5. Access Services
 
-Each microservice must be run in its own terminal. Make sure to change to the correct directory before starting each service.
+| Service             | URL                           | Description                       |
+| ------------------- | ----------------------------- | --------------------------------- |
+| **Auth Service**    | http://localhost:3000/graphql | Authentication & admin management |
+| **Vehicle Service** | http://localhost:3000/graphql | Vehicle CRUD operations           |
+| **Log Service**     | http://localhost:3000         | Logging endpoint                  |
 
-### Start Vehicle Service
+## 🐳 Docker Setup
+
+### 1. Prerequisites
+
+- Docker Desktop installed and running
+- No local Node.js installation required
+
+### 2. Start All Services
 
 ```bash
-cd vehicle-service
-npm run start:dev
+# Build and start all services
+docker-compose up --build
+
+# Or run in background
+docker-compose up --build -d
 ```
 
-### Start Auth Service
+### 3. Access Services
+
+| Service             | URL                           | Description                       |
+| ------------------- | ----------------------------- | --------------------------------- |
+| **Auth Service**    | http://localhost:4001/graphql | Authentication & admin management |
+| **Vehicle Service** | http://localhost:4003/graphql | Vehicle CRUD operations           |
+| **Log Service**     | http://localhost:4002         | Logging endpoint                  |
+| **MongoDB**         | localhost:27017               | Database (direct access)          |
+| **Redis**           | localhost:6379                | Cache (direct access)             |
+| **Kafka**           | localhost:9092                | Message broker                    |
+
+### 4. Docker Commands
 
 ```bash
-cd auth-service
-npm run start:dev
+# View running containers
+docker-compose ps
+
+# View logs
+docker-compose logs
+docker-compose logs auth-service
+
+# Stop services
+docker-compose down
+
+# Rebuild and restart
+docker-compose up --build
 ```
 
-> **Note:** Both services must be running simultaneously in different terminals.
+## 🧪 Testing
 
-## Conception & Microservices Architecture
+### GraphQL Playground Testing
 
-This project is structured as a set of independent microservices:
+Open the GraphQL Playground in your browser and test the following queries:
 
-- **Auth Service:** Handles authentication, admin management, and JWT issuance.
-- **Vehicle Service:** Manages vehicle CRUD operations.
+#### Auth Service (http://localhost:4001/graphql)
 
-Each service has its own GraphQL API and runs on a separate port (default: 3000 for auth-service, 3001 for vehicle-service). This allows for independent scaling, deployment, and testing.
-
-## GraphQL API Reference
-
-### Vehicle Service (default: http://localhost:3001/graphql)
-
-#### findAll
-
-```graphql
-query {
-  vehicles {
-    model
-    brand
-    year
-    status
-    price
-  }
-}
-```
-
-#### findOne
-
-```graphql
-query {
-  vehicle(id: "6855208a7e95a553f3be7b79") {
-    brand
-    model
-    year
-  }
-}
-```
-
-#### updateVehicle
-
-```graphql
-mutation {
-  updateVehicle(
-    id: "68551e907e95a553f3be7b73"
-    input: {
-      model: "Divo"
-      brand: "Bugatti"
-      year: 2020
-      status: "sold"
-      price: 5800000
-      image: "divo.jpg"
-      km: 0
-    }
-  ) {
-    model
-  }
-}
-```
-
-#### createVehicle
-
-```graphql
-mutation {
-  addVehicle(
-    input: {
-      model: "Duster"
-      brand: "Dacia"
-      year: 2023
-      price: 23000
-      status: "sold"
-      image: "duster.jpg"
-      km: 70
-    }
-  ) {
-    model
-  }
-}
-```
-
-#### deleteVehicle
-
-```graphql
-mutation {
-  deleteVehicle(id: "6855208a7e95a553f3be7b79") {
-    model
-  }
-}
-```
-
-### Auth Service (default: http://localhost:3000/graphql)
-
-#### login
+**Login:**
 
 ```graphql
 mutation {
@@ -190,87 +197,127 @@ mutation {
 }
 ```
 
-#### Token Usage
-
-Add the following header to requests requiring authentication:
-
-```json
-{
-  "Authorization": "Bearer YOUR_TOKEN_HERE"
-}
-```
-
-#### createAdmin
+**Create Admin:**
 
 ```graphql
 mutation {
-  createAdmin(username: "newadmin", password: "newpass123")
+  createAdmin(username: "newadmin", password: "password123")
 }
 ```
 
-## Conclusion
+#### Vehicle Service (http://localhost:4003/graphql)
 
-This project demonstrates the design, development, and deployment of a modern web application based on a microservices architecture, following current development and DevOps standards. The chosen theme is an **admin-side car rental management system**, providing secure authentication, vehicle management, and scalable service communication. The backend leverages NestJS, GraphQL, MongoDB, Redis, and JWT authentication, and is designed for extensibility and real-world deployment scenarios. This project also includes UML conception for architecture and service interactions.
+**Get All Vehicles:**
 
-## Authors
+```graphql
+query {
+  vehicles {
+    id
+    model
+    price
+    status
+  }
+}
+```
 
-- Mohammed CHERKAOUI
-- Wassim ZAAIT
-- Yousra Msaouri Charroud
+**Create Vehicle:**
 
-## License
+```graphql
+mutation {
+  createVehicle(
+    input: { model: "Tesla Model 3", price: 45000, status: "available" }
+  ) {
+    id
+    model
+    price
+    status
+  }
+}
+```
 
-MIT © VSMP
+**Update Vehicle:**
+
+```graphql
+mutation {
+  updateVehicle(
+    id: "VEHICLE_ID_HERE"
+    input: { model: "Tesla Model 3 Updated", price: 47000, status: "sold" }
+  ) {
+    id
+    model
+    price
+    status
+  }
+}
+```
+
+**Delete Vehicle:**
+
+```graphql
+mutation {
+  deleteVehicle(id: "VEHICLE_ID_HERE")
+}
+```
+
+### Default Credentials
+
+- **Username**: `admin`
+- **Password**: `admin123`
+
+## 📚 API Documentation
+
+### Auth Service Endpoints
+
+| Method | Endpoint   | Description                         |
+| ------ | ---------- | ----------------------------------- |
+| `POST` | `/graphql` | GraphQL endpoint for authentication |
+
+**Available Operations:**
+
+- `login(username: String!, password: String!): String!` - Login and get JWT token
+- `createAdmin(username: String!, password: String!): Admin!` - Create new admin
+
+### Vehicle Service Endpoints
+
+| Method | Endpoint   | Description                             |
+| ------ | ---------- | --------------------------------------- |
+| `POST` | `/graphql` | GraphQL endpoint for vehicle operations |
+
+**Available Operations:**
+
+- `vehicles: [Vehicle!]!` - Get all vehicles
+- `vehicle(id: String!): Vehicle` - Get vehicle by ID
+- `createVehicle(input: CreateVehicleInput!): Vehicle!` - Create new vehicle
+- `updateVehicle(id: String!, input: UpdateVehicleInput!): Vehicle!` - Update vehicle
+- `deleteVehicle(id: String!): Boolean!` - Delete vehicle
+
+### Log Service Endpoints
+
+| Method | Endpoint | Description  |
+| ------ | -------- | ------------ |
+| `GET`  | `/`      | Health check |
+| `POST` | `/logs`  | Log endpoint |
+
+## 🔧 Environment Variables
+
+The services use the following environment variables (configured in docker-compose.yml):
+
+| Variable      | Description               | Default          |
+| ------------- | ------------------------- | ---------------- |
+| `NODE_ENV`    | Node environment          | `production`     |
+| `PORT`        | Service port              | `3000`           |
+| `MONGODB_URI` | MongoDB connection string | Service-specific |
+
+## 👥 Authors & License
+
+### Authors
+
+- **Your Name** - _Initial work_ - [YourGitHub](https://github.com/yourusername)
+
+### License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ---
 
-## DevOps: Running All Services with Docker Compose
-
-### 1. Prerequisites
-
-- Ensure you have [Docker](https://docs.docker.com/get-docker/) and [Docker Compose](https://docs.docker.com/compose/install/) installed.
-
-### 2. Build and Start All Services
-
-Open a terminal in the project root (where `docker-compose.yml` is located) and run:
-
-```sh
-docker-compose up --build
-```
-
-- This will build Docker images for all services and start them, including MongoDB, Redis, Kafka, and Zookeeper.
-
-### 3. Accessing Services
-
-- **auth-service:** http://localhost:3001
-- **log-service:** http://localhost:3002
-- **vehicle-service:** http://localhost:3003
-
-### 4. Stopping All Services
-
-Press `Ctrl+C` in the terminal to stop all running services.
-
-### 5. Cleaning Up (Optional)
-
-To remove all containers and networks created by Docker Compose, run:
-
-```sh
-docker-compose down
-```
-
-### 6. Additional Tips
-
-- To run services in the background (detached mode):
-  ```sh
-  docker-compose up --build -d
-  ```
-- To view logs for a specific service:
-  ```sh
-  docker-compose logs <service-name>
-  ```
-  Example:
-  ```sh
-  docker-compose logs auth-service
-  ```
-
----
+**Note**: This project is designed for educational and development purposes. For production use, ensure proper security measures, environment variable management, and database backups are implemented.
