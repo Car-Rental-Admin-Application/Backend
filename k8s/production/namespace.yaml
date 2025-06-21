@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: vehicle-rental-prod
+  labels:
+    name: vehicle-rental-prod
+    environment: production

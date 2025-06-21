@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: vehicle-rental-staging
+  labels:
+    name: vehicle-rental-staging
+    environment: staging 

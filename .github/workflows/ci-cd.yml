@@ -1,0 +1,173 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+
+env:
+  REGISTRY: docker.io
+  IMAGE_NAME_AUTH: mohammed761/backend-auth-service
+  IMAGE_NAME_VEHICLE: mohammed761/backend-vehicle-service
+  IMAGE_NAME_LOG: mohammed761/backend-log-service
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    services:
+      mongodb:
+        image: mongo:latest
+        ports:
+          - 27017:27017
+      redis:
+        image: redis:latest
+        ports:
+          - 6379:6379
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18"
+          cache: "npm"
+
+      - name: Install dependencies - Auth Service
+        run: |
+          cd auth-service
+          npm ci
+
+      - name: Install dependencies - Vehicle Service
+        run: |
+          cd vehicle-service
+          npm ci
+
+      - name: Install dependencies - Log Service
+        run: |
+          cd log-service
+          npm ci
+
+      - name: Run tests - Auth Service
+        run: |
+          cd auth-service
+          npm test
+        env:
+          MONGODB_URI: mongodb://localhost:27017/test_auth
+
+      - name: Run tests - Vehicle Service
+        run: |
+          cd vehicle-service
+          npm test
+        env:
+          MONGODB_URI: mongodb://localhost:27017/test_vehicle
+
+      - name: Run tests - Log Service
+        run: |
+          cd log-service
+          npm test
+        env:
+          MONGODB_URI: mongodb://localhost:27017/test_log
+
+  build-and-push:
+    needs: test
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build and push Auth Service
+        uses: docker/build-push-action@v5
+        with:
+          context: ./auth-service
+          push: true
+          tags: |
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_AUTH }}:latest
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_AUTH }}:${{ github.sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Build and push Vehicle Service
+        uses: docker/build-push-action@v5
+        with:
+          context: ./vehicle-service
+          push: true
+          tags: |
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_VEHICLE }}:latest
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_VEHICLE }}:${{ github.sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Build and push Log Service
+        uses: docker/build-push-action@v5
+        with:
+          context: ./log-service
+          push: true
+          tags: |
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_LOG }}:latest
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_LOG }}:${{ github.sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  deploy-staging:
+    needs: test
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/develop'
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Update kubeconfig
+        run: aws eks update-kubeconfig --name vehicle-rental-cluster --region us-east-1
+
+      - name: Deploy to staging
+        run: |
+          kubectl apply -f k8s/staging/
+          kubectl set image deployment/auth-service auth-service=${{ env.REGISTRY }}/${{ env.IMAGE_NAME_AUTH }}:latest
+          kubectl set image deployment/vehicle-service vehicle-service=${{ env.REGISTRY }}/${{ env.IMAGE_NAME_VEHICLE }}:latest
+          kubectl set image deployment/log-service log-service=${{ env.REGISTRY }}/${{ env.IMAGE_NAME_LOG }}:latest
+
+  deploy-production:
+    needs: build-and-push
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    environment: production
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Update kubeconfig
+        run: aws eks update-kubeconfig --name vehicle-rental-cluster --region us-east-1
+
+      - name: Deploy to production
+        run: |
+          kubectl apply -f k8s/production/
+          kubectl set image deployment/auth-service auth-service=${{ env.REGISTRY }}/${{ env.IMAGE_NAME_AUTH }}:${{ github.sha }}
+          kubectl set image deployment/vehicle-service vehicle-service=${{ env.REGISTRY }}/${{ env.IMAGE_NAME_VEHICLE }}:${{ github.sha }}
+          kubectl set image deployment/log-service log-service=${{ env.REGISTRY }}/${{ env.IMAGE_NAME_LOG }}:${{ github.sha }}

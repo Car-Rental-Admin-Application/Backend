@@ -1,0 +1,38 @@
+# MongoDB Service (External Service pointing to AWS DocumentDB)
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongodb-service
+  namespace: vehicle-rental-prod
+spec:
+  type: ExternalName
+  externalName: vehicle-rental-docdb.cluster-xxxxx.us-east-1.docdb.amazonaws.com
+  ports:
+    - port: 27017
+      targetPort: 27017
+---
+# Redis Service (External Service pointing to AWS ElastiCache)
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis-service
+  namespace: vehicle-rental-prod
+spec:
+  type: ExternalName
+  externalName: vehicle-rental-redis.xxxxx.cache.amazonaws.com
+  ports:
+    - port: 6379
+      targetPort: 6379
+---
+# Kafka Service (External Service pointing to AWS MSK)
+apiVersion: v1
+kind: Service
+metadata:
+  name: kafka-service
+  namespace: vehicle-rental-prod
+spec:
+  type: ExternalName
+  externalName: vehicle-rental-kafka.xxxxx.kafka.us-east-1.amazonaws.com
+  ports:
+    - port: 9092
+      targetPort: 9092
