@@ -12,26 +12,24 @@ A secure admin authentication and vehicle management system built with NestJS mi
 
 ## 📋 Table of Contents
 
-- [Features](#-features)
-- [Architecture](#-architecture)
-- [Prerequisites](#-prerequisites)
-- [Local Development Setup](#-local-development-setup)
-- [Docker Setup](#-docker-setup)
-- [Testing](#-testing)
-- [API Documentation](#-api-documentation)
-- [Environment Variables](#-environment-variables)
+- [What This Project Does](#-what-this-project-does)
+- [What You Need to Install](#-what-you-need-to-install)
+- [How to Run Locally (Step by Step)](#-how-to-run-locally-step-by-step)
+- [How to Run with Docker (Step by Step)](#-how-to-run-with-docker-step-by-step)
+- [How to Test Your Services](#-how-to-test-your-services)
+- [What Each Service Does](#-what-each-service-does)
+- [Troubleshooting](#-troubleshooting)
 - [Authors & License](#-authors--license)
 
-## ✨ Features
+## 🎯 What This Project Does
 
-- **🔐 Secure Authentication**: JWT-based admin authentication
-- **🚗 Vehicle Management**: Complete CRUD operations for vehicles
-- **📊 Logging System**: Centralized logging with Kafka integration
-- **🔄 Microservices**: Scalable architecture with separate services
-- **📈 GraphQL API**: Modern API with GraphQL playground
-- **🗄️ MongoDB**: NoSQL database for flexible data storage
-- **⚡ Redis**: High-performance caching
-- **🐳 Docker Ready**: Containerized deployment
+This project is a **microservices system** with three main services:
+
+1. **Auth Service** - Handles admin login and user management
+2. **Vehicle Service** - Manages vehicle information (add, edit, delete vehicles)
+3. **Log Service** - Handles logging and monitoring
+
+Each service runs independently and communicates through a shared database (MongoDB).
 
 ## 🏗️ Architecture
 
@@ -51,145 +49,184 @@ A secure admin authentication and vehicle management system built with NestJS mi
          └─────────────────┴─────────────────┴─────────────────┘
 ```
 
-## 📋 Prerequisites
+## 📦 What You Need to Install
 
-### For Local Development
+### Option 1: Local Development
 
-- Node.js (v18 or higher)
-- npm or yarn
-- MongoDB (running locally or cloud)
-- Redis (running locally or cloud)
-- Apache Kafka (running locally or cloud)
+- **Node.js** (version 18 or higher) - Download from [nodejs.org](https://nodejs.org/)
+- **MongoDB** - Download from [mongodb.com](https://mongodb.com/)
+- **Redis** - Download from [redis.io](https://redis.io/)
+- **Apache Kafka** - Download from [kafka.apache.org](https://kafka.apache.org/)
 
-### For Docker Setup
+### Option 2: Docker (Recommended for Beginners)
 
-- Docker Desktop
-- Docker Compose
+- **Docker Desktop** - Download from [docker.com](https://docker.com/)
+- That's it! Docker will handle everything else for you.
 
-## 🚀 Local Development Setup
+## 🚀 How to Run Locally (Step by Step)
 
-### 1. Clone and Install Dependencies
+### Step 1: Download the Project
 
 ```bash
-git clone <repository-url>
+# Download the project files
+git clone https://github.com/Car-Rental-Admin-Application/Backend.git
 cd Backend
-
-# Install dependencies for all services
-cd auth-service && npm install && cd ..
-cd vehicle-service && npm install && cd ..
-cd log-service && npm install && cd ..
 ```
 
-### 2. Start Infrastructure Services
-
-Start MongoDB, Redis, and Kafka locally or use Docker:
+### Step 2: Install Dependencies
 
 ```bash
-# Using Docker for infrastructure only
-docker run -d --name mongodb -p 27017:27017 mongo
-docker run -d --name redis -p 6379:6379 redis
-docker run -d --name zookeeper -p 2181:2181 confluentinc/cp-zookeeper:7.3.0
-docker run -d --name kafka -p 9092:9092 --link zookeeper:zookeeper confluentinc/cp-kafka:7.3.0
+# Go to each service folder and install packages
+cd auth-service
+npm install
+
+cd ../vehicle-service
+npm install
+
+cd ../log-service
+npm install
+
+cd ..
 ```
 
-### 3. Configure Environment Variables
-
-Create `.env` files in each service directory:
-
-**auth-service/.env:**
-
-```env
-MONGODB_URI=mongodb://localhost:27017/admin_auth
-JWT_SECRET=your-secret-key
-```
-
-**vehicle-service/.env:**
-
-```env
-MONGODB_URI=mongodb://localhost:27017/vehicle_db
-```
-
-**log-service/.env:**
-
-```env
-MONGODB_URI=mongodb://localhost:27017/logs_db
-```
-
-### 4. Start Services
+### Step 3: Start MongoDB
 
 ```bash
-# Terminal 1 - Auth Service
-cd auth-service && npm run start:dev
-
-# Terminal 2 - Vehicle Service
-cd vehicle-service && npm run start:dev
-
-# Terminal 3 - Log Service
-cd log-service && npm run start:dev
+# Start MongoDB on your computer
+# On Windows: Start MongoDB service
+# On Mac/Linux: mongod
 ```
 
-### 5. Access Services
-
-| Service             | URL                           | Description                       |
-| ------------------- | ----------------------------- | --------------------------------- |
-| **Auth Service**    | http://localhost:3000/graphql | Authentication & admin management |
-| **Vehicle Service** | http://localhost:3000/graphql | Vehicle CRUD operations           |
-| **Log Service**     | http://localhost:3000         | Logging endpoint                  |
-
-## 🐳 Docker Setup
-
-### 1. Prerequisites
-
-- Docker Desktop installed and running
-- No local Node.js installation required
-
-### 2. Start All Services
+### Step 4: Start Redis
 
 ```bash
-# Build and start all services
+# Start Redis on your computer
+# On Windows: Start Redis service
+# On Mac/Linux: redis-server
+```
+
+### Step 5: Start Kafka
+
+```bash
+# Start Zookeeper first
+zookeeper-server-start.sh config/zookeeper.properties
+
+# Then start Kafka
+kafka-server-start.sh config/server.properties
+```
+
+### Step 6: Start the Services
+
+Open three separate terminal windows:
+
+**Terminal 1 - Auth Service (Port 3001):**
+
+```bash
+cd auth-service
+set PORT=3001 && npm run start:dev
+```
+
+**Terminal 2 - Vehicle Service (Port 3002):**
+
+```bash
+cd vehicle-service
+set PORT=3002 && npm run start:dev
+```
+
+**Terminal 3 - Log Service (Port 3003):**
+
+```bash
+cd log-service
+set PORT=3003 && npm run start:dev
+```
+
+**💡 Note**: We set different ports for each service to avoid conflicts:
+
+- Auth Service: Port 3001
+- Vehicle Service: Port 3002
+- Log Service: Port 3003
+
+### Step 7: Test Your Services
+
+Open your web browser and go to:
+
+- **Auth Service**: http://localhost:3001/graphql
+- **Vehicle Service**: http://localhost:3002/graphql
+- **Log Service**: http://localhost:3003
+
+**💡 Recommendation**: Use the Docker setup below instead - it handles all port conflicts automatically!
+
+## 🐳 How to Run with Docker (Step by Step)
+
+### Step 1: Install Docker Desktop
+
+1. Go to [docker.com](https://docker.com/)
+2. Download Docker Desktop for your operating system
+3. Install and start Docker Desktop
+4. Wait for Docker to finish starting (you'll see a green "Docker Desktop is running" message)
+
+### Step 2: Download the Project
+
+```bash
+# Download the project files
+git clone <your-repository-url>
+cd Backend
+```
+
+### Step 3: Start Everything with One Command
+
+```bash
+# This command will:
+# 1. Download all required images (MongoDB, Redis, Kafka, etc.)
+# 2. Build your services
+# 3. Start everything automatically
 docker-compose up --build
-
-# Or run in background
-docker-compose up --build -d
 ```
 
-### 3. Access Services
+**What happens when you run this command:**
 
-| Service             | URL                           | Description                       |
-| ------------------- | ----------------------------- | --------------------------------- |
-| **Auth Service**    | http://localhost:4001/graphql | Authentication & admin management |
-| **Vehicle Service** | http://localhost:4003/graphql | Vehicle CRUD operations           |
-| **Log Service**     | http://localhost:4002         | Logging endpoint                  |
-| **MongoDB**         | localhost:27017               | Database (direct access)          |
-| **Redis**           | localhost:6379                | Cache (direct access)             |
-| **Kafka**           | localhost:9092                | Message broker                    |
+- Docker downloads MongoDB, Redis, Kafka, and Zookeeper images
+- Docker builds your three services (auth, vehicle, log)
+- All services start and connect to each other automatically
+- You'll see logs from all services in your terminal
 
-### 4. Docker Commands
+### Step 4: Wait for Everything to Start
+
+You'll see messages like:
+
+```
+auth-service-1     | [Nest] 1234   - 06/21/2025, 12:34:56 AM   [NestApplication] Nest application successfully started
+vehicle-service-1  | [Nest] 1234   - 06/21/2025, 12:34:57 AM   [NestApplication] Nest application successfully started
+log-service-1      | [Nest] 1234   - 06/21/2025, 12:34:58 AM   [NestApplication] Nest application successfully started
+```
+
+When you see these messages, your services are ready!
+
+### Step 5: Access Your Services
+
+Open your web browser and go to:
+
+| Service             | URL                           | What You'll See                 |
+| ------------------- | ----------------------------- | ------------------------------- |
+| **Auth Service**    | http://localhost:4001/graphql | GraphQL playground for login    |
+| **Vehicle Service** | http://localhost:4003/graphql | GraphQL playground for vehicles |
+| **Log Service**     | http://localhost:4002         | Simple welcome page             |
+
+### Step 6: Stop Everything (When You're Done)
 
 ```bash
-# View running containers
-docker-compose ps
-
-# View logs
-docker-compose logs
-docker-compose logs auth-service
-
-# Stop services
+# Press Ctrl+C in the terminal where docker-compose is running
+# Or open a new terminal and run:
 docker-compose down
-
-# Rebuild and restart
-docker-compose up --build
 ```
 
-## 🧪 Testing
+## 🧪 How to Test Your Services
 
-### GraphQL Playground Testing
+### Testing Auth Service
 
-Open the GraphQL Playground in your browser and test the following queries:
-
-#### Auth Service (http://localhost:4001/graphql)
-
-**Login:**
+1. **Open**: http://localhost:4001/graphql
+2. **You'll see**: A GraphQL playground interface
+3. **Try this login query**:
 
 ```graphql
 mutation {
@@ -197,17 +234,13 @@ mutation {
 }
 ```
 
-**Create Admin:**
+4. **Click the "Play" button** (▶️)
+5. **Expected result**: You'll get a long string (JWT token)
 
-```graphql
-mutation {
-  createAdmin(username: "newadmin", password: "password123")
-}
-```
+### Testing Vehicle Service
 
-#### Vehicle Service (http://localhost:4003/graphql)
-
-**Get All Vehicles:**
+1. **Open**: http://localhost:4003/graphql
+2. **Try this query to see all vehicles**:
 
 ```graphql
 query {
@@ -220,99 +253,87 @@ query {
 }
 ```
 
-**Create Vehicle:**
+3. **Click the "Play" button** (▶️)
+4. **Expected result**: You'll see an empty array `[]` (no vehicles yet)
 
-```graphql
-mutation {
-  createVehicle(
-    input: { model: "Tesla Model 3", price: 45000, status: "available" }
-  ) {
-    id
-    model
-    price
-    status
-  }
-}
-```
+### Testing Log Service
 
-**Update Vehicle:**
+1. **Open**: http://localhost:4002
+2. **Expected result**: You'll see a welcome message
 
-```graphql
-mutation {
-  updateVehicle(
-    id: "VEHICLE_ID_HERE"
-    input: { model: "Tesla Model 3 Updated", price: 47000, status: "sold" }
-  ) {
-    id
-    model
-    price
-    status
-  }
-}
-```
+## 📋 What Each Service Does
 
-**Delete Vehicle:**
+### Auth Service (Port 4001)
 
-```graphql
-mutation {
-  deleteVehicle(id: "VEHICLE_ID_HERE")
-}
-```
+- **Purpose**: Handles admin login and authentication
+- **What it does**:
+  - Lets admins log in with username/password
+  - Creates new admin accounts
+  - Returns JWT tokens for authentication
+- **Default admin**: username: `admin`, password: `admin123`
 
-### Default Credentials
+### Vehicle Service (Port 4003)
 
-- **Username**: `admin`
-- **Password**: `admin123`
+- **Purpose**: Manages vehicle information
+- **What it does**:
+  - Shows all vehicles in the system
+  - Adds new vehicles
+  - Updates vehicle information
+  - Deletes vehicles
+- **Vehicle data**: model, price, status (available/sold/maintenance)
 
-## 📚 API Documentation
+### Log Service (Port 4002)
 
-### Auth Service Endpoints
+- **Purpose**: Handles logging and monitoring
+- **What it does**:
+  - Receives log messages from other services
+  - Stores logs in the database
+  - Provides a simple health check endpoint
 
-| Method | Endpoint   | Description                         |
-| ------ | ---------- | ----------------------------------- |
-| `POST` | `/graphql` | GraphQL endpoint for authentication |
+## 🔧 Troubleshooting
 
-**Available Operations:**
+### "Server cannot be reached" Error
 
-- `login(username: String!, password: String!): String!` - Login and get JWT token
-- `createAdmin(username: String!, password: String!): Admin!` - Create new admin
+**Problem**: You can't access the GraphQL playground
+**Solution**:
 
-### Vehicle Service Endpoints
+1. Make sure Docker is running
+2. Wait 30-60 seconds for all services to start
+3. Try refreshing the page
+4. Check if ports 4001, 4002, 4003 are not used by other applications
 
-| Method | Endpoint   | Description                             |
-| ------ | ---------- | --------------------------------------- |
-| `POST` | `/graphql` | GraphQL endpoint for vehicle operations |
+### "Connection refused" Error
 
-**Available Operations:**
+**Problem**: Services can't connect to MongoDB
+**Solution**:
 
-- `vehicles: [Vehicle!]!` - Get all vehicles
-- `vehicle(id: String!): Vehicle` - Get vehicle by ID
-- `createVehicle(input: CreateVehicleInput!): Vehicle!` - Create new vehicle
-- `updateVehicle(id: String!, input: UpdateVehicleInput!): Vehicle!` - Update vehicle
-- `deleteVehicle(id: String!): Boolean!` - Delete vehicle
+1. Make sure all Docker containers are running: `docker-compose ps`
+2. Restart everything: `docker-compose down && docker-compose up --build`
 
-### Log Service Endpoints
+### "Cannot find module" Error
 
-| Method | Endpoint | Description  |
-| ------ | -------- | ------------ |
-| `GET`  | `/`      | Health check |
-| `POST` | `/logs`  | Log endpoint |
+**Problem**: Missing dependencies
+**Solution**:
 
-## 🔧 Environment Variables
+1. Make sure you ran `docker-compose up --build` (not just `docker-compose up`)
+2. Check that all package.json files exist in each service folder
 
-The services use the following environment variables (configured in docker-compose.yml):
+### Services Won't Start
 
-| Variable      | Description               | Default          |
-| ------------- | ------------------------- | ---------------- |
-| `NODE_ENV`    | Node environment          | `production`     |
-| `PORT`        | Service port              | `3000`           |
-| `MONGODB_URI` | MongoDB connection string | Service-specific |
+**Problem**: Docker containers keep stopping
+**Solution**:
+
+1. Check Docker Desktop is running
+2. Make sure you have enough disk space
+3. Try: `docker system prune` to clean up Docker cache
+4. Restart Docker Desktop
 
 ## 👥 Authors & License
 
 ### Authors
-
-- **Your Name** - _Initial work_ - [YourGitHub](https://github.com/yourusername)
+- **Mohammed CHERKAOUI** - _DevOps_ - [YourGitHub](https://github.com/mohammed761-dl)
+- **Wassim ZIAAT** - _BackEnd_ - [YourGitHub](https://github.com/psyphonz)
+- **Yousra Msaouri Charroud** - _Frontend_ - [YourGitHub](https://github.com/yousraMsaouri)
 
 ### License
 
@@ -320,4 +341,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ---
 
-**Note**: This project is designed for educational and development purposes. For production use, ensure proper security measures, environment variable management, and database backups are implemented.
+**💡 Tip for Beginners**: Start with the Docker method - it's easier and handles all the complex setup for you automatically!
