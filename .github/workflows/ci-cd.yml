@@ -10,7 +10,6 @@ env:
   REGISTRY: docker.io
   IMAGE_NAME_AUTH: mohammed761/backend-auth-service
   IMAGE_NAME_VEHICLE: mohammed761/backend-vehicle-service
-  IMAGE_NAME_LOG: mohammed761/backend-log-service
 
 jobs:
   test:
