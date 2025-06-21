@@ -98,17 +98,6 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
-      - name: Build and push Log Service
-        uses: docker/build-push-action@v5
-        with:
-          context: ./log-service
-          push: true
-          tags: |
-            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_LOG }}:latest
-            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_LOG }}:${{ github.sha }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
-
   deploy-staging:
     needs: test
     runs-on: ubuntu-latest
@@ -132,7 +121,6 @@ jobs:
           kubectl apply -f k8s/staging/
           kubectl set image deployment/auth-service auth-service=${{ env.REGISTRY }}/${{ env.IMAGE_NAME_AUTH }}:latest
           kubectl set image deployment/vehicle-service vehicle-service=${{ env.REGISTRY }}/${{ env.IMAGE_NAME_VEHICLE }}:latest
-          kubectl set image deployment/log-service log-service=${{ env.REGISTRY }}/${{ env.IMAGE_NAME_LOG }}:latest
 
   deploy-production:
     needs: build-and-push
@@ -158,4 +146,3 @@ jobs:
           kubectl apply -f k8s/production/
           kubectl set image deployment/auth-service auth-service=${{ env.REGISTRY }}/${{ env.IMAGE_NAME_AUTH }}:${{ github.sha }}
           kubectl set image deployment/vehicle-service vehicle-service=${{ env.REGISTRY }}/${{ env.IMAGE_NAME_VEHICLE }}:${{ github.sha }}
-          kubectl set image deployment/log-service log-service=${{ env.REGISTRY }}/${{ env.IMAGE_NAME_LOG }}:${{ github.sha }}
