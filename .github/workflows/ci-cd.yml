@@ -35,10 +35,10 @@ jobs:
           node-version: "20"
           cache: "npm"
 
-      - name: Install dependencies - Auth Service
+      - name: Install dependencies for auth-service
         run: |
           cd auth-service
-          npm ci
+          npm install
 
       - name: Install dependencies - Vehicle Service
         run: |
