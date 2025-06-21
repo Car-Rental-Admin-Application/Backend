@@ -276,7 +276,7 @@ query {
 
 ```graphql
 query {
-  vehicle(id: "6855208a7e95a553f3be7b79") {
+  vehicle(id: "6855f47dc77f9bf3495dc69b") {
     brand
     model
     year
@@ -309,7 +309,7 @@ mutation {
 ```graphql
 mutation {
   updateVehicle(
-    id: "68551e907e95a553f3be7b73"
+    id: "6855f47dc77f9bf3495dc69b"
     input: {
       model: "Divo"
       brand: "Bugatti"
@@ -329,7 +329,7 @@ mutation {
 
 ```graphql
 mutation {
-  deleteVehicle(id: "6855208a7e95a553f3be7b79")
+  deleteVehicle(id: "6855f47dc77f9bf3495dc69b")
 }
 ```
 
