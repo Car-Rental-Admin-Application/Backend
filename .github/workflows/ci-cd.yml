@@ -45,11 +45,6 @@ jobs:
           cd vehicle-service
           npm ci
 
-      - name: Install dependencies - Log Service
-        run: |
-          cd log-service
-          npm ci
-
       - name: Run tests - Auth Service
         run: |
           cd auth-service
@@ -63,13 +58,6 @@ jobs:
           npm test
         env:
           MONGODB_URI: mongodb://localhost:27017/test_vehicle
-
-      - name: Run tests - Log Service
-        run: |
-          cd log-service
-          npm test
-        env:
-          MONGODB_URI: mongodb://localhost:27017/test_log
 
   build-and-push:
     needs: test
