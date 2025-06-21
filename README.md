@@ -332,7 +332,7 @@ query {
 
 ### Authors
 - **Mohammed CHERKAOUI** - _DevOps_ - [YourGitHub](https://github.com/mohammed761-dl)
-- **Wassim ZIAAT** - _BackEnd_ - [YourGitHub](https://github.com/psyphonz)
+- **Wassim ZAAIT** - _BackEnd_ - [YourGitHub](https://github.com/psyphonz)
 - **Yousra Msaouri Charroud** - _Frontend_ - [YourGitHub](https://github.com/yousraMsaouri)
 
 ### License
