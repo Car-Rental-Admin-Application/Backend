@@ -226,7 +226,8 @@ docker-compose down
 
 1. **Open**: http://localhost:4001/graphql
 2. **You'll see**: A GraphQL playground interface
-3. **Try this login query**:
+
+#### Login
 
 ```graphql
 mutation {
@@ -234,32 +235,113 @@ mutation {
 }
 ```
 
-4. **Click the "Play" button** (▶️)
-5. **Expected result**: You'll get a long string (JWT token)
+#### Create Admin
+
+```graphql
+mutation {
+  createAdmin(username: "newadmin", password: "newpass123")
+}
+```
+
+#### Using JWT Token
+
+For protected operations, add this header:
+
+```json
+{
+  "Authorization": "Bearer YOUR_TOKEN_HERE"
+}
+```
 
 ### Testing Vehicle Service
 
 1. **Open**: http://localhost:4003/graphql
-2. **Try this query to see all vehicles**:
+2. **You'll see**: A GraphQL playground interface
+
+#### Get All Vehicles
 
 ```graphql
 query {
   vehicles {
-    id
     model
-    price
+    brand
+    year
     status
+    price
   }
 }
 ```
 
-3. **Click the "Play" button** (▶️)
-4. **Expected result**: You'll see an empty array `[]` (no vehicles yet)
+#### Get One Vehicle
+
+```graphql
+query {
+  vehicle(id: "6855208a7e95a553f3be7b79") {
+    brand
+    model
+    year
+  }
+}
+```
+
+#### Create Vehicle
+
+```graphql
+mutation {
+  addVehicle(
+    input: {
+      model: "Duster"
+      brand: "Dacia"
+      year: 2023
+      price: 23000
+      status: "sold"
+      image: "duster.jpg"
+      km: 70
+    }
+  ) {
+    model
+  }
+}
+```
+
+#### Update Vehicle
+
+```graphql
+mutation {
+  updateVehicle(
+    id: "68551e907e95a553f3be7b73"
+    input: {
+      model: "Divo"
+      brand: "Bugatti"
+      year: 2020
+      status: "sold"
+      price: 5800000
+      image: "divo.jpg"
+      km: 0
+    }
+  ) {
+    model
+  }
+}
+```
+
+#### Delete Vehicle
+
+```graphql
+mutation {
+  deleteVehicle(id: "6855208a7e95a553f3be7b79")
+}
+```
 
 ### Testing Log Service
 
 1. **Open**: http://localhost:4002
 2. **Expected result**: You'll see a welcome message
+
+### Default Credentials
+
+- **Username**: `admin`
+- **Password**: `admin123`
 
 ## 📋 What Each Service Does
 
@@ -331,6 +413,7 @@ query {
 ## 👥 Authors & License
 
 ### Authors
+
 - **Mohammed CHERKAOUI** - _DevOps_ - [https://github.com/mohammed761-dl]
 - **Wassim ZAAIT** - _BackEnd_ - [https://github.com/psyphonz]
 - **Yousra Msaouri Charroud** - _Frontend_ - [https://github.com/yousraMsaouri]
