@@ -10,6 +10,10 @@
 
 A secure admin authentication and vehicle management system built with NestJS microservices architecture.
 
+## 📹 Video Demo
+
+Watch the project in action: [Video Simulation](https://drive.google.com/file/d/1vzehjbfMX59Zdu3V8vLfS_7oZBIT_Nt_/view?usp=sharing)
+
 ## 📋 Table of Contents
 
 - [What This Project Does](#-what-this-project-does)
@@ -158,6 +162,8 @@ Open your web browser and go to:
 
 ## 🐳 How to Run with Docker (Step by Step)
 
+### Option 1: Build from Source (Recommended for Development)
+
 ### Step 1: Install Docker Desktop
 
 1. Go to [docker.com](https://docker.com/)
@@ -169,7 +175,7 @@ Open your web browser and go to:
 
 ```bash
 # Download the project files
-git clone <your-repository-url>
+git clone https://github.com/Car-Rental-Admin-Application/Backend.git
 cd Backend
 ```
 
@@ -189,6 +195,60 @@ docker-compose up --build
 - Docker builds your three services (auth, vehicle, log)
 - All services start and connect to each other automatically
 - You'll see logs from all services in your terminal
+
+### Option 2: Use Pre-built Images from Docker Hub
+
+### Step 1: Install Docker Desktop
+
+1. Go to [docker.com](https://docker.com/)
+2. Download Docker Desktop for your operating system
+3. Install and start Docker Desktop
+
+### Step 2: Pull and Run Pre-built Images
+
+```bash
+# Pull the latest images from Docker Hub
+docker pull mohammed761/backend-auth-service:latest
+docker pull mohammed761/backend-vehicle-service:latest
+docker pull mohammed761/backend-log-service:latest
+
+# Or pull the versioned images
+docker pull mohammed761/backend-auth-service:vehicle-rental-v1
+docker pull mohammed761/backend-vehicle-service:vehicle-rental-v1
+docker pull mohammed761/backend-log-service:vehicle-rental-v1
+```
+
+### Step 3: Start Infrastructure Services
+
+```bash
+# Start MongoDB, Redis, and Kafka
+docker run -d --name mongodb -p 27017:27017 mongo
+docker run -d --name redis -p 6379:6379 redis
+docker run -d --name zookeeper -p 2181:2181 confluentinc/cp-zookeeper:7.3.0
+docker run -d --name kafka -p 9092:9092 --link zookeeper:zookeeper confluentinc/cp-kafka:7.3.0
+```
+
+### Step 4: Start Your Services
+
+```bash
+# Start Auth Service
+docker run -d --name auth-service -p 4001:3000 \
+  -e MONGODB_URI=mongodb://mongodb:27017/admin_auth \
+  --link mongodb:mongodb \
+  mohammed761/backend-auth-service:latest
+
+# Start Vehicle Service
+docker run -d --name vehicle-service -p 4003:3000 \
+  -e MONGODB_URI=mongodb://mongodb:27017/vehicle_db \
+  --link mongodb:mongodb \
+  mohammed761/backend-vehicle-service:latest
+
+# Start Log Service
+docker run -d --name log-service -p 4002:3000 \
+  -e MONGODB_URI=mongodb://mongodb:27017/logs_db \
+  --link mongodb:mongodb \
+  mohammed761/backend-log-service:latest
+```
 
 ### Step 4: Wait for Everything to Start
 
@@ -220,7 +280,31 @@ Open your web browser and go to:
 docker-compose down
 ```
 
+## 📦 Docker Hub Images
+
+This project's Docker images are available on Docker Hub:
+
+### **Latest Images:**
+
+- `mohammed761/backend-auth-service:latest`
+- `mohammed761/backend-vehicle-service:latest`
+- `mohammed761/backend-log-service:latest`
+
+### **Versioned Images:**
+
+- `mohammed761/backend-auth-service:vehicle-rental-v1`
+- `mohammed761/backend-vehicle-service:vehicle-rental-v1`
+- `mohammed761/backend-log-service:vehicle-rental-v1`
+
+### **Docker Hub Links:**
+
+- [Auth Service Repository](https://hub.docker.com/r/mohammed761/backend-auth-service)
+- [Vehicle Service Repository](https://hub.docker.com/r/mohammed761/backend-vehicle-service)
+- [Log Service Repository](https://hub.docker.com/r/mohammed761/backend-log-service)
+
 ## 🧪 How to Test Your Services
+
+**📹 Watch the video demo first**: [Video Simulation](https://drive.google.com/file/d/1vzehjbfMX59Zdu3V8vLfS_7oZBIT_Nt_/view?usp=sharing)
 
 ### Testing Auth Service
 
